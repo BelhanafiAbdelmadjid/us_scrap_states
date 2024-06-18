@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h1>Scraping data!</h1>
+<form method="POST" action="{{ url_for('home') }}">
+    <div class="form-group">
+        <label for="state">State (required):</label>
+        <select class="form-control" id="state" name="state" required>
+            <option value="">Select a state</option>
+            {% for state in states %}
+                <option value="{{ state }}">{{ state }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="form-group" id="name_filters_container">
+        <label>Name Filters:</label>
+        <div id="name_filters">
+            <!-- Dynamic inputs will be added here -->
+        </div>
+        <button type="button" class="btn btn-success" id="add_name_filter">Add Name Filter</button>
+    </div>
+    <div class="form-group" id="specific_names_container">
+        <label>Specific Names:</label>
+        <div id="specific_names">
+            <!-- Dynamic inputs will be added here -->
+        </div>
+        <button type="button" class="btn btn-success" id="add_specific_name">Add Specific Name</button>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+
+<div class="container" >
+    <h1>Result</h1>
+    {% if result %}
+        <table class="table table-striped" style="max-width: 80vw;overflow-x: scroll;" >
+            <thead>
+                <tr>
+                    {% for key in result[0].keys() %}
+                        <th>{{ key }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in result %}
+                    <tr>
+                        {% for value in item.values() %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No results found.</p>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const nameFiltersContainer = document.getElementById('name_filters');
+    const addNameFilterButton = document.getElementById('add_name_filter');
+
+    addNameFilterButton.addEventListener('click', function() {
+        const inputGroup = document.createElement('div');
+        inputGroup.className = 'input-group mb-3';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'form-control';
+        input.name = 'name_filters';
+        input.placeholder = 'Enter name filter';
+        input.required = true;
+
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'btn btn-danger';
+        deleteButton.type = 'button';
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', function() {
+            inputGroup.remove();
+        });
+
+        inputGroup.appendChild(input);
+        inputGroup.appendChild(deleteButton);
+        nameFiltersContainer.appendChild(inputGroup);
+    });
+
+    const specificNamesContainer = document.getElementById('specific_names');
+    const addSpecificNameButton = document.getElementById('add_specific_name');
+
+    addSpecificNameButton.addEventListener('click', function() {
+        const inputGroup = document.createElement('div');
+        inputGroup.className = 'input-group mb-3';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'form-control';
+        input.name = 'specific_names';
+        input.placeholder = 'Enter specific name';
+        input.required = true;
+
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'btn btn-danger';
+        deleteButton.type = 'button';
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', function() {
+            inputGroup.remove();
+        });
+
+        inputGroup.appendChild(input);
+        inputGroup.appendChild(deleteButton);
+        specificNamesContainer.appendChild(inputGroup);
+    });
+
+
+
+    
+});
+</script>
+{% endblock %}

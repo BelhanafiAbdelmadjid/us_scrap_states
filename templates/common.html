@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h1>Common last names</h1>
+<ul style="height: 40vh;overflow-y: scroll;" >
+    {% for name in names %}
+        <li>{{ name }}</li>
+    {% endfor %}
+</ul>
+<form style="height: 20vh;min-height: 150px;" method="POST" action="{{ url_for('commonNames') }}">
+    <div class="form-group">
+        <label for="name">Enter name (one name only!):</label>
+        <input required  class="form-control" id="name" name="name" />
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+</form>
+<form style="height: 20vh;min-height: 150px;" method="POST" action="{{ url_for('deletingName') }}">
+    <div class="form-group">
+        <label for="name">Delete name (one name only!):</label>
+        <input required class="form-control" id="name" name="name" />
+    </div>
+    <button type="submit" class="btn danger btn-danger">Delete</button>
+</form>
+{% endblock %}
