@@ -9,6 +9,7 @@ app = Flask(__name__)
     2 : captcha + pagination,
     3 : pagination / no captcha
     4 : captcha no text /no pagination with button disabled until captcha done
+    5 : special for HAWAI
 
 '''
 
@@ -353,7 +354,9 @@ app.config["STATES_CONFIG"] = {
             "ROWS" : {
                 "BY" : By.TAG_NAME,
                 "VALUE" : "th"
-            }
+            },
+            "ROWS_CLASS_INT" : True,
+            "ROWS_SPECIAL_CLASSES" : []
         },
         'pagination' : {
             'BY' : By.CSS_SELECTOR,
@@ -417,36 +420,100 @@ app.config["STATES_CONFIG"] = {
         },
         "filter_on_attribute" : "Property Value"
     },
-    # 'MISSOURI' : {
-    #     'getUrl' : "https://treasurer.mo.gov/UnclaimedProperty/en/Property/SearchIndex",
-    #     'postUrl' : None,
-    #     'ButtonSubmitID' : {
-    #         "BY" : By.NAME,
-    #         "VALUE" : "submitPerson"
-    #     },
-    #     "more_to_check" : [
-    #         {
-    #             "BY" : By.ID,
-    #             "VALUE" : "rbSearchType"
-    #         }
-    #     ],
-    #     'lastName' : "SearchModel_LastName",
-    #     "number_based" : None,
-    #     'method' : 2,
-    #     'table' : {
-    #         "BY" : By.ID,
-    #         "VALUE" : "searchTable",
-    #         "ROWS" : {
-    #             "BY" : By.TAG_NAME,
-    #             "VALUE" : "th"
-    #         }
-    #     },
-    #     'pagination' : {
-    #         'BY' : By.CSS_SELECTOR,
-    #         "VALUE" : ".PagedList-skipToNext"
-    #     },
-    #     # "filter_on_attribute" : "Amount:"
-    # },
+    'MISSOURI' : {
+        'getUrl' : "https://treasurer.mo.gov/UnclaimedProperty/en/Property/SearchIndex",
+        'postUrl' : None,
+        'ButtonSubmitID' : {
+            "BY" : By.NAME,
+            "VALUE" : "submitPerson"
+        },
+        "more_to_check" : [
+            {
+                "BY" : By.ID,
+                "VALUE" : "rbSearchType"
+            }
+        ],
+        'lastName' : "SearchModel_LastName",
+        "number_based" :  {
+            "attribute" : "Amount:",
+            "type" : "$float"
+        },
+        'method' : 2,
+        'table' : {
+            "BY" : By.ID,
+            "VALUE" : "searchTable",
+            "ROWS" : {
+                "BY" : By.TAG_NAME,
+                "VALUE" : "th"
+            },
+            "ROWS_CLASS_INT" : False,
+            "ROWS_SPECIAL_CLASSES" : ["border_bottom"]
+        },
+        'pagination' : {
+            'BY' : By.CSS_SELECTOR,
+            "VALUE" : ".PagedList-skipToLast"
+        },
+        "filter_on_attribute" : "Amount:"
+    },
+    'NEVADA' : {
+        'getUrl' : "https://claims.nevadaunclaimedproperty.gov/en/Property/SearchIndex",
+        'postUrl' : None,
+        'ButtonSubmitID' : {
+            "BY" : By.NAME,
+            "VALUE" : "submitPerson"
+        },
+        "more_to_check" : [
+            {
+                "BY" : By.ID,
+                "VALUE" : "rbSearchType"
+            }
+        ],
+        'lastName' : "SearchModel_LastName",
+        "number_based" :  None,
+        'method' : 2,
+        'table' : {
+            "BY" : By.ID,
+            "VALUE" : "searchTable",
+            "ROWS" : {
+                "BY" : By.TAG_NAME,
+                "VALUE" : "th"
+            },
+            "ROWS_CLASS_INT" : True,
+            "ROWS_SPECIAL_CLASSES" : []
+        },
+        'pagination' : {
+            'BY' : By.CSS_SELECTOR,
+            "VALUE" : ".PagedList-skipToLast"
+        },
+        "filter_on_attribute" : "Amount:"
+    },
+    'PATREASURY' : {
+        'getUrl' : "https://unclaimedproperty.patreasury.gov/en/Property/SearchIndex",
+        'postUrl' : None,
+        'ButtonSubmitID' : {
+            "BY" : By.NAME,
+            "VALUE" : "submitPersonAddress"
+        },
+        "more_to_check" : [],
+        'lastName' : "AddressSearchModel_LastName",
+        "number_based" :  None,
+        'method' : 2,
+        'table' : {
+            "BY" : By.ID,
+            "VALUE" : "searchTable",
+            "ROWS" : {
+                "BY" : By.TAG_NAME,
+                "VALUE" : "th"
+            },
+            "ROWS_CLASS_INT" : True,
+            "ROWS_SPECIAL_CLASSES" : []
+        },
+        'pagination' : {
+            'BY' : By.CSS_SELECTOR,
+            "VALUE" : ".PagedList-skipToLast"
+        },
+        "filter_on_attribute" : "Amount:"
+    },
 
 
 

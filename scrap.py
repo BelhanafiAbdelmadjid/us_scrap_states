@@ -162,7 +162,7 @@ def scrap_properties(commonNames,state,lastNameInputID,ButtonSubmitID,fetch_link
         driver.quit()
         return resuts
     elif method == 2 :
-        
+    
         class element_attribute_value_to_be(object):
             def __init__(self, locator, attribute, value):
                 self.locator = locator
@@ -200,36 +200,28 @@ def scrap_properties(commonNames,state,lastNameInputID,ButtonSubmitID,fetch_link
                 EC.element_to_be_clickable((ButtonSubmitID["BY"], ButtonSubmitID["VALUE"]))
             )
             
-
-            # Click the input element
             input_element.click()
-
-           
-
-
-            # parent_element = WebDriverWait(driver, 10).until(
-            #     EC.presence_of_element_located((state_conf["pagination"]["BY"], state_conf["pagination"]["VALUE"]))
-            # )
+            parent_element = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((state_conf["pagination"]["BY"], state_conf["pagination"]["VALUE"]))
+            )
             parent_element = driver.find_element(state_conf["pagination"]["BY"], state_conf["pagination"]["VALUE"])
 
-            # Find the <a> element inside the parent element
             a_element = parent_element.find_element(By.TAG_NAME, "a")
 
-            # Get the content of the <a> element
             a_last_link = a_element.get_attribute("href")
-            print("GOT LINK",a_last_link)
             page_numbers = int(re.search(r'page=(\d+)', a_last_link).group(1))
+            print("page_numbers",page_numbers)
             a_last_link = re.sub(r'page=\d+&', '', a_last_link)
             big_result = []
             for i in range(1,page_numbers+1):
                 fetch_link = a_last_link + f'&page={i}'
+                print("fetch_link",fetch_link)
                 driver.get(fetch_link)
                 parent_element = WebDriverWait(driver, 10).until(
                     EC.presence_of_element_located((state_conf["table"].get("BY"), state_conf["table"].get("VALUE")))
                     )
                 table_row = driver.find_element(state_conf["table"].get("BY"), state_conf["table"].get("VALUE"))
                 if i == 1 :
-                    # table_headers = table_row.find_elements(By.TAG_NAME, "th")
                     table_headers = table_row.find_elements(state_conf["table"]["ROWS"]["BY"], state_conf["table"]["ROWS"]["VALUE"])
                     print(len(table_headers),"table_headers")
                     headers = []
@@ -240,29 +232,36 @@ def scrap_properties(commonNames,state,lastNameInputID,ButtonSubmitID,fetch_link
                         else :
                             headers.append(header_text)
                 table_row = table_row.find_elements(By.TAG_NAME, "tr")
+                
                 rows = []
                 for row in table_row:
                     class_name = row.get_attribute("class").strip(" ")
-                    try :
-                        class_name = int(class_name)
-                        rows.append(row)
-                    except :
-                        pass
+                    if state_conf["table"].get("ROWS_SPECIAL_CLASSES") :
+                        for special_class in state_conf["table"]["ROWS_SPECIAL_CLASSES"] :
+                            if special_class in class_name :
+                                rows.append(row)
+                    elif state_conf["table"].get("ROWS_CLASS_INT") :
+                        try :
+                            class_name = int(class_name)
+                            rows.append(row)
+                        except :
+                            pass
+                
                 for row in rows :
                     tds = row.find_elements(By.TAG_NAME, "td")
-                    i = 0
-                    mini_dict = {}
-                    for td in tds :
-                        if headers[i]  != "N" :
-                            str_content = tds[i].get_attribute("innerHTML").strip()
-                            check_html = render_html_or_none(tds[i].get_attribute("innerHTML").strip())
-                            if check_html[0]:
-                                str_content = check_html[1]
-                            mini_dict[headers[i]] = str_content
-                        i = i +1 
-                    big_result.append(mini_dict)
+                    if len(tds) > 1 :
+                        i = 0
+                        mini_dict = {}
+                        for td in tds :
+                            if headers[i]  != "N" :
+                                str_content = tds[i].get_attribute("innerHTML").strip()
+                                check_html = render_html_or_none(tds[i].get_attribute("innerHTML").strip())
+                                if check_html[0]:
+                                    str_content = check_html[1]
+                                mini_dict[headers[i]] = str_content
+                            i = i +1 
+                        big_result.append(mini_dict)
             
-            # big_result = sort_fitler(json_body=big_result,number_based=number_based,looking_for_amount_str_array=looking_for_amount_str_array)
             target_properties = []
             if  number_based is None :
                 if len(looking_for_amount_str_array) == 0 : 
@@ -286,7 +285,7 @@ def scrap_properties(commonNames,state,lastNameInputID,ButtonSubmitID,fetch_link
                 
                 target_properties = sorted(cleaned_array, key=lambda x: float(x[number_based["attribute"]]), reverse=True)
                 target_properties = target_properties + not_cleaned_array
-                result = result + target_properties
+                # result = result + target_properties
             result = result + target_properties
         f = open(f'TEST.json',"a")
         json.dump(result, f, ensure_ascii=False, indent=4)
